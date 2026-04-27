@@ -1,0 +1,19 @@
+[project]
+name = "ai-face-analyzer"
+version = "1.0.0"
+description = "AI-powered face analysis app — detects age, emotion, gender, and ethnicity from camera or uploaded images"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi[standard]>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "python-multipart>=0.0.9",
+    "deepface>=0.0.93",
+    "tf-keras>=2.16.0",
+    "Pillow>=10.0.0",
+    "numpy>=1.26.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+

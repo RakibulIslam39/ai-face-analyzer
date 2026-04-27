@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="bn" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Face Analyzer — মুখ বিশ্লেষক</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- ─── Header ────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header__inner">
+      <div class="logo">
+        <span class="logo__icon">🧠</span>
+        <span class="logo__text">AI Face Analyzer</span>
+      </div>
+      <p class="header__subtitle">ক্যামেরা বা ছবি থেকে বয়স, ইমোশন, জেন্ডার ও এথনিসিটি বিশ্লেষণ করুন</p>
+    </div>
+  </header>
+
+  <!-- ─── Main ──────────────────────────────────────────────── -->
+  <main class="main">
+    <!-- Input Section -->
+    <section class="card input-card">
+      <h2 class="card__title">📸 ছবি দিন</h2>
+
+      <!-- Tab switcher -->
+      <div class="tabs" role="tablist">
+        <button class="tab tab--active" data-tab="camera" role="tab" aria-selected="true">ক্যামেরা</button>
+        <button class="tab" data-tab="upload" role="tab" aria-selected="false">আপলোড</button>
+      </div>
+
+      <!-- Camera panel -->
+      <div id="panel-camera" class="panel panel--active">
+        <div class="camera-wrapper">
+          <video id="video" autoplay playsinline muted></video>
+          <canvas id="canvas" style="display:none"></canvas>
+          <div id="camera-placeholder" class="camera-placeholder">
+            <span>📷</span>
+            <p>ক্যামেরা চালু করতে নিচের বাটনে ক্লিক করুন</p>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button id="btn-start-camera" class="btn btn--secondary">ক্যামেরা চালু করুন</button>
+          <button id="btn-capture" class="btn btn--primary" disabled>ছবি তুলুন</button>
+        </div>
+      </div>
+
+      <!-- Upload panel -->
+      <div id="panel-upload" class="panel">
+        <div class="upload-area" id="drop-zone">
+          <span class="upload-area__icon">📁</span>
+          <p>ছবি এখানে ড্র্যাগ করুন অথবা</p>
+          <label class="btn btn--secondary upload-btn">
+            ফাইল নির্বাচন করুন
+            <input type="file" id="file-input" accept="image/*" hidden />
+          </label>
+          <p class="upload-area__hint">JPG, PNG, WebP — সর্বোচ্চ 10 MB</p>
+        </div>
+        <div id="upload-preview" class="upload-preview" style="display:none">
+          <img id="preview-img" alt="preview" />
+          <button id="btn-remove-preview" class="btn btn--small btn--danger">✕ সরান</button>
+        </div>
+      </div>
+
+      <button id="btn-analyze" class="btn btn--accent btn--block" disabled>
+        🔍 বিশ্লেষণ করুন
+      </button>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="card results-card" style="display:none">
+      <h2 class="card__title">📊 বিশ্লেষণ ফলাফল</h2>
+      <div id="results-container"></div>
+    </section>
+
+    <!-- Loader -->
+    <div id="loader" class="loader-overlay" style="display:none">
+      <div class="loader">
+        <div class="loader__spinner"></div>
+        <p class="loader__text">AI বিশ্লেষণ চলছে…</p>
+      </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="toast" class="toast" style="display:none"></div>
+  </main>
+
+  <!-- ─── Footer ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <p>Built with ❤️ using DeepFace &amp; FastAPI</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
