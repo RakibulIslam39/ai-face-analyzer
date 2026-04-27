@@ -72,34 +72,48 @@ def _read_image(raw_bytes: bytes) -> np.ndarray:
     return np.array(img)
 
 
+def _to_python(val: Any) -> Any:
+    """Convert numpy scalars to native Python types for JSON serialization."""
+    if isinstance(val, (np.integer,)):
+        return int(val)
+    if isinstance(val, (np.floating,)):
+        return float(val)
+    if isinstance(val, np.ndarray):
+        return val.tolist()
+    return val
+
+
 def _format_result(analysis: dict[str, Any]) -> dict[str, Any]:
     """Normalise a single DeepFace analysis dict into a clean response."""
-    dominant_emotion = analysis.get("dominant_emotion", "unknown")
-    dominant_gender = analysis.get("dominant_gender", "unknown")
-    dominant_race = analysis.get("dominant_race", "unknown")
+    dominant_emotion = str(analysis.get("dominant_emotion", "unknown"))
+    dominant_gender = str(analysis.get("dominant_gender", "unknown"))
+    dominant_race = str(analysis.get("dominant_race", "unknown"))
 
     emotion_scores = analysis.get("emotion", {})
     gender_scores = analysis.get("gender", {})
     race_scores = analysis.get("race", {})
 
+    region = analysis.get("region", {})
+    safe_region = {k: _to_python(v) for k, v in region.items()} if isinstance(region, dict) else region
+
     return {
-        "age": analysis.get("age"),
+        "age": _to_python(analysis.get("age")),
         "emotion": {
             "dominant": dominant_emotion,
             "dominant_bn": EMOTION_LABELS_BN.get(dominant_emotion, dominant_emotion),
-            "scores": {k: round(v, 2) for k, v in emotion_scores.items()},
+            "scores": {k: round(float(v), 2) for k, v in emotion_scores.items()},
         },
         "gender": {
             "dominant": dominant_gender,
             "dominant_bn": GENDER_LABELS_BN.get(dominant_gender, dominant_gender),
-            "scores": {k: round(v, 2) for k, v in gender_scores.items()},
+            "scores": {k: round(float(v), 2) for k, v in gender_scores.items()},
         },
         "ethnicity": {
             "dominant": dominant_race,
             "dominant_bn": RACE_LABELS_BN.get(dominant_race, dominant_race),
-            "scores": {k: round(v, 2) for k, v in race_scores.items()},
+            "scores": {k: round(float(v), 2) for k, v in race_scores.items()},
         },
-        "face_region": analysis.get("region"),
+        "face_region": safe_region,
     }
 
 
