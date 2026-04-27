@@ -97,14 +97,32 @@ body{
   overflow:hidden;
   margin-bottom:1rem;
 }
-.camera-wrapper video{width:100%;height:100%;object-fit:cover}
+.camera-wrapper video{width:100%;height:100%;object-fit:cover;transition:opacity .3s}
 .camera-placeholder{
   position:absolute;inset:0;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   color:var(--text-muted);gap:.5rem;
+  padding:1rem;
+  text-align:center;
 }
 .camera-placeholder span{font-size:3rem}
+.camera-placeholder p{max-width:90%;line-height:1.5}
+.camera-placeholder.error{color:var(--danger)}
+.camera-placeholder.error span{filter:none}
+.camera-placeholder.loading{color:var(--accent)}
+
+/* Captured overlay */
+.captured-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.7);
+}
+.captured-overlay img{
+  max-width:100%;max-height:100%;
+  object-fit:contain;
+  border-radius:var(--radius-sm);
+}
 
 /* ── Upload ────────────────────────────────────────────────── */
 .upload-area{
@@ -117,10 +135,13 @@ body{
 }
 .upload-area.dragover{border-color:var(--accent);background:rgba(0,206,201,.06)}
 .upload-area__icon{font-size:2.5rem;display:block;margin-bottom:.5rem}
-.upload-area__hint{color:var(--text-muted);font-size:.8rem;margin-top:.5rem}
+.upload-area__hint{color:var(--text-muted);font-size:.8rem;margin-top:.75rem}
+
+.upload-buttons{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem}
 
 .upload-preview{text-align:center;margin-bottom:1rem}
 .upload-preview img{max-width:100%;max-height:320px;border-radius:var(--radius-sm);margin-bottom:.5rem}
+.preview-info{color:var(--text-muted);font-size:.8rem;margin-bottom:.5rem}
 
 /* ── Buttons ───────────────────────────────────────────────── */
 .btn{
@@ -163,20 +184,46 @@ body{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 .loader__text{color:var(--text-muted);font-size:.95rem}
+.loader__subtext{color:var(--text-muted);font-size:.8rem;margin-top:.25rem;opacity:.7}
 
-/* ── Toast ─────────────────────────────────────────────────── */
-.toast{
+/* ── Toast System ──────────────────────────────────────────── */
+.toast-container{
   position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
-  background:var(--danger);color:#fff;
-  padding:.75rem 1.25rem;border-radius:var(--radius-sm);
-  font-size:.9rem;z-index:200;
-  animation:fadeIn .3s ease;
-  max-width:90vw;text-align:center;
+  display:flex;flex-direction:column;gap:.5rem;
+  z-index:200;
+  max-width:90vw;width:400px;
+  pointer-events:none;
 }
-@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.toast{
+  background:var(--danger);color:#fff;
+  padding:.75rem 2.5rem .75rem 1rem;
+  border-radius:var(--radius-sm);
+  font-size:.88rem;
+  animation:toastIn .3s ease;
+  pointer-events:auto;
+  position:relative;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+  line-height:1.4;
+}
+.toast--success{background:var(--success)}
+.toast--warning{background:#e17055;color:#fff}
+.toast--error{background:var(--danger)}
+.toast--exit{animation:toastOut .3s ease forwards}
+
+.toast__close{
+  position:absolute;top:.5rem;right:.5rem;
+  background:none;border:none;color:rgba(255,255,255,.7);
+  cursor:pointer;font-size:.8rem;padding:.15rem .3rem;
+  line-height:1;
+}
+.toast__close:hover{color:#fff}
+
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px)}}
 
 /* ── Results ───────────────────────────────────────────────── */
 .results-card{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 .face-result{
   background:var(--surface-hover);
@@ -240,4 +287,5 @@ body{
 @media(max-width:480px){
   .stat-grid{grid-template-columns:1fr}
   .bar-row__label{width:70px;font-size:.72rem}
+  .upload-buttons{flex-direction:column;align-items:stretch}
 }
