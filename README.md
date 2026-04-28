@@ -1,10 +1,10 @@
 # 🧠 AI Face Analyzer — মুখ বিশ্লেষক
 
-ক্যামেরা বা ছবি আপলোড থেকে AI ব্যবহার করে মুখ বিশ্লেষণ করুন। এই অ্যাপটি **DeepFace** ও **FastAPI** দিয়ে তৈরি এবং **Vercel**-এ ডিপ্লয় করা যায়।
+ক্যামেরা বা ছবি আপলোড থেকে AI ব্যবহার করে মুখ বিশ্লেষণ করুন। এই অ্যাপটি **DeepFace** ও **FastAPI** দিয়ে তৈরি এবং **Render**-এ ডিপ্লয় করা যায়।
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green?logo=fastapi&logoColor=white)
-![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)
+![Render](https://img.shields.io/badge/Deploy-Render-46E3B7?logo=render&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
@@ -32,65 +32,50 @@
 | AI/ML     | DeepFace, TensorFlow/Keras |
 | Frontend  | Vanilla HTML/CSS/JS |
 | Detection | OpenCV (face detection) |
-| Deploy    | Vercel (Python Serverless) |
+| Deploy    | Render (Docker) |
 | Testing   | pytest, Locust (load testing) |
 
 ## 📁 Project Structure
 
 ```
 ai-face-analyzer/
-├── index.py              # FastAPI app (Vercel entrypoint)
-├── public/
-│   ├── index.html        # Single-page frontend
-│   ├── style.css         # Dark-themed UI styles
-│   └── app.js            # Frontend logic (camera, upload, results)
 ├── app/
 │   ├── __init__.py
-│   └── main.py           # Legacy local-dev entrypoint
-├── templates/
-│   └── index.html        # Legacy HTML (local dev)
+│   └── main.py           # FastAPI application
 ├── static/
-│   ├── style.css         # Legacy static (local dev)
-│   └── app.js
+│   ├── style.css          # Dark-themed UI styles
+│   └── app.js             # Frontend logic (camera, upload, results)
+├── templates/
+│   └── index.html         # Single-page frontend
 ├── tests/
-│   ├── conftest.py       # Test fixtures
-│   ├── test_api.py       # 19 unit/integration tests
-│   └── locustfile.py     # Load testing config
-├── vercel.json           # Vercel deployment config
-├── requirements.txt      # Python dependencies (Vercel)
-├── pyproject.toml        # Project config & dev dependencies
-├── Dockerfile            # Docker deployment alternative
+│   ├── conftest.py        # Test fixtures
+│   ├── test_api.py        # 19 unit/integration tests
+│   └── locustfile.py      # Load testing config
+├── Dockerfile             # Docker build for Render
+├── render.yaml            # Render Blueprint (one-click deploy)
+├── requirements.txt       # Python dependencies
+├── pyproject.toml         # Project config & dev dependencies
 └── README.md
 ```
 
-## 🚀 Deploy to Vercel / ভার্সেলে ডিপ্লয়
+## 🚀 Deploy to Render / রেন্ডারে ডিপ্লয়
 
 ### এক-ক্লিক ডিপ্লয়
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/RakibulIslam39/ai-face-analyzer)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/RakibulIslam39/ai-face-analyzer)
 
 ### ম্যানুয়াল ডিপ্লয়
 
-1. [Vercel](https://vercel.com)-এ লগইন করুন
-2. **"Add New Project"** ক্লিক করুন
-3. GitHub থেকে `ai-face-analyzer` রিপো ইম্পোর্ট করুন
-4. Framework Preset: **Other** সিলেক্ট করুন
-5. **Deploy** ক্লিক করুন — Vercel স্বয়ংক্রিয়ভাবে `index.py` থেকে FastAPI অ্যাপ ডিটেক্ট করবে
+1. [Render](https://render.com)-এ লগইন করুন
+2. **"New +"** → **"Web Service"** ক্লিক করুন
+3. GitHub থেকে `ai-face-analyzer` রিপো কানেক্ট করুন
+4. সেটিংস:
+   - **Name:** `ai-face-analyzer`
+   - **Runtime:** `Docker`
+   - **Plan:** `Starter` বা তার উপরে (TensorFlow-এর জন্য কমপক্ষে 2GB RAM দরকার)
+5. **"Create Web Service"** ক্লিক করুন
 
-### Vercel CLI দিয়ে
-
-```bash
-# Vercel CLI ইনস্টল
-npm i -g vercel
-
-# ডিপ্লয়
-vercel
-
-# প্রোডাকশন ডিপ্লয়
-vercel --prod
-```
-
-> **⚠️ গুরুত্বপূর্ণ:** TensorFlow + DeepFace এর সাইজ বড় (~500MB+)। Vercel-এর Pro/Enterprise প্ল্যানে Serverless Function সাইজ লিমিট বেশি (250MB compressed)। ফ্রি টিয়ারে কাজ না করলে Vercel Pro তে আপগ্রেড করুন অথবা নিচের Docker/Railway অপশন ব্যবহার করুন।
+> **⚠️ গুরুত্বপূর্ণ:** TensorFlow + DeepFace চালাতে কমপক্ষে **2GB RAM** লাগে। Render-এর **Starter** ($7/month) বা **Standard** প্ল্যান সিলেক্ট করুন। Free tier-এ RAM কম থাকায় কাজ নাও করতে পারে।
 
 ## 💻 Local Development / লোকাল ডেভেলপমেন্ট
 
@@ -109,13 +94,6 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 # http://localhost:8000
 ```
 
-### Vercel Dev দিয়ে লোকালি রান
-
-```bash
-pip install -r requirements.txt
-vercel dev
-```
-
 ## 🐳 Docker দিয়ে রান
 
 ```bash
@@ -131,10 +109,8 @@ docker run -p 8000:8000 ai-face-analyzer
 # Install test dependencies
 pip install -e ".[test]"
 
-# Run tests
+# Run tests (19 tests)
 pytest -v
-
-# 19 tests — validation, security, API responses, rate limiting
 ```
 
 ### Load Testing (Locust)
@@ -194,7 +170,7 @@ Upload an image file to analyze faces.
 | 429 | Rate limited | অনেক বেশি রিকোয়েস্ট পাঠানো হয়েছে |
 | 500 | Server error | সার্ভারে একটি অপ্রত্যাশিত সমস্যা হয়েছে |
 
-### `GET /api/health`
+### `GET /health`
 
 Health check endpoint. Returns `{"status": "ok", "version": "1.1.0"}`
 

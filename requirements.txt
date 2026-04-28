@@ -1,4 +1,5 @@
 fastapi[standard]>=0.115.0
+uvicorn[standard]>=0.30.0
 python-multipart>=0.0.9
 deepface>=0.0.93
 tf-keras>=2.16.0

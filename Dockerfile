@@ -14,6 +14,10 @@ COPY templates/ templates/
 
 RUN pip install --no-cache-dir .
 
+# Pre-download DeepFace models at build time so first request is fast
+RUN python -c "from deepface import DeepFace; DeepFace.build_model('Emotion'); DeepFace.build_model('Age'); DeepFace.build_model('Gender'); DeepFace.build_model('Race')" 2>/dev/null || true
+
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Render sets PORT env var; default to 8000
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
