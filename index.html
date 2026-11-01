@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="bn" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f1117" />
+  <!-- Static hosts like GitHub Pages / HF Spaces cannot set headers, so the CSP also lives here.
+       'wasm-unsafe-eval' lets TensorFlow.js use WebAssembly if it ever needs to. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; worker-src blob:; object-src 'none'; base-uri 'self'; form-action 'none'" />
+  <meta name="description" content="ছবি থেকে বয়স, ইমোশন ও জেন্ডার অনুমান করুন — সম্পূর্ণ আপনার ব্রাউজারে, কোনো ছবি আপলোড হয় না।" />
+  <title>AI Face Analyzer — মুখ বিশ্লেষক</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ─── Header ────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header__inner">
+      <div class="logo">
+        <span class="logo__icon">🧠</span>
+        <span class="logo__text">AI Face Analyzer</span>
+      </div>
+      <p class="header__subtitle">ক্যামেরা বা ছবি থেকে বয়স, ইমোশন ও জেন্ডার বিশ্লেষণ করুন</p>
+    </div>
+  </header>
+
+  <!-- ─── Main ──────────────────────────────────────────────── -->
+  <main class="main">
+    <!-- Privacy notice -->
+    <section class="notice" role="note">
+      🔒 <strong>আপনার ছবি আপনার ডিভাইসেই থাকে।</strong>
+      বিশ্লেষণ সম্পূর্ণ আপনার ব্রাউজারে হয় — কোনো ছবি সার্ভারে আপলোড বা সংরক্ষণ করা হয় না।
+    </section>
+
+    <!-- Input Section -->
+    <section class="card input-card">
+      <h2 class="card__title">📸 ছবি দিন</h2>
+
+      <!-- Tab switcher -->
+      <div class="tabs" role="tablist">
+        <button class="tab tab--active" data-tab="camera" role="tab" aria-selected="true">ক্যামেরা</button>
+        <button class="tab" data-tab="upload" role="tab" aria-selected="false">আপলোড</button>
+      </div>
+
+      <!-- Camera panel -->
+      <div id="panel-camera" class="panel panel--active">
+        <div class="camera-wrapper">
+          <video id="video" autoplay playsinline muted></video>
+          <canvas id="canvas" style="display:none"></canvas>
+          <!-- Camera placeholder with permission states -->
+          <div id="camera-placeholder" class="camera-placeholder">
+            <span id="camera-placeholder-icon">📷</span>
+            <p id="camera-placeholder-text">ক্যামেরা চালু করতে নিচের বাটনে ক্লিক করুন</p>
+          </div>
+          <!-- Captured image overlay -->
+          <div id="captured-overlay" class="captured-overlay" style="display:none">
+            <img id="captured-img" alt="captured" />
+          </div>
+        </div>
+        <div class="btn-group">
+          <button id="btn-start-camera" class="btn btn--secondary">ক্যামেরা চালু করুন</button>
+          <button id="btn-switch-camera" class="btn btn--secondary" style="display:none" title="ক্যামেরা সুইচ করুন">🔄</button>
+          <button id="btn-capture" class="btn btn--primary" disabled>ছবি তুলুন</button>
+        </div>
+        <button id="btn-retake" class="btn btn--secondary btn--block" style="display:none">🔁 আবার তুলুন</button>
+      </div>
+
+      <!-- Upload panel -->
+      <div id="panel-upload" class="panel">
+        <div class="upload-area" id="drop-zone">
+          <span class="upload-area__icon">📁</span>
+          <p>ছবি এখানে ড্র্যাগ করুন অথবা</p>
+          <div class="upload-buttons">
+            <label class="btn btn--secondary upload-btn">
+              📂 ফাইল নির্বাচন করুন
+              <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" hidden />
+            </label>
+          </div>
+          <p class="upload-area__hint">JPG, PNG, WebP, GIF, BMP — সর্বোচ্চ 10 MB — সর্বনিম্ন 50x50px</p>
+        </div>
+        <div id="upload-preview" class="upload-preview" style="display:none">
+          <img id="preview-img" alt="preview" />
+          <div class="preview-info" id="preview-info"></div>
+          <button id="btn-remove-preview" class="btn btn--small btn--danger">✕ সরান</button>
+        </div>
+      </div>
+
+      <p id="model-status" class="model-status" aria-live="polite"></p>
+
+      <button id="btn-analyze" class="btn btn--accent btn--block" disabled>
+        🔍 বিশ্লেষণ করুন
+      </button>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="card results-card" style="display:none">
+      <h2 class="card__title">📊 বিশ্লেষণ ফলাফল</h2>
+      <p class="disclaimer">⚠️ এগুলো AI-র আনুমানিক অনুমান — বয়স, জেন্ডার ও ইমোশন ভুল হতে পারে। আলো, কোণ ও ছবির মানের উপর ফলাফল নির্ভর করে।</p>
+      <div id="results-container"></div>
+      <button id="btn-new-analysis" class="btn btn--primary btn--block">🔄 নতুন বিশ্লেষণ করুন</button>
+    </section>
+
+    <!-- Loader -->
+    <div id="loader" class="loader-overlay" style="display:none">
+      <div class="loader">
+        <div class="loader__spinner"></div>
+        <p class="loader__text">AI বিশ্লেষণ চলছে…</p>
+        <p class="loader__subtext">এটি কয়েক সেকেন্ড সময় নিতে পারে</p>
+      </div>
+    </div>
+
+    <!-- Toast container (supports multiple toasts) -->
+    <div id="toast-container" class="toast-container"></div>
+  </main>
+
+  <!-- ─── Footer ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <p>Built with ❤️ using face-api.js &amp; TensorFlow.js · সব বিশ্লেষণ আপনার ডিভাইসে</p>
+  </footer>
+
+  <script src="vendor/face-api.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
