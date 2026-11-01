@@ -1,134 +1,128 @@
-# 🧠 AI Face Analyzer — মুখ বিশ্লেষক
+# AI Face Analyzer
 
-ক্যামেরা বা ছবি আপলোড থেকে AI ব্যবহার করে মুখ বিশ্লেষণ করুন। এই অ্যাপটি **DeepFace** ও **FastAPI** দিয়ে তৈরি এবং **Render**-এ ডিপ্লয় করা যায়।
+AI Face Analyzer is a FastAPI web application that analyzes faces in uploaded images. It uses DeepFace with OpenCV detection to estimate age, emotion, gender, and race, then presents the results through a responsive HTML/CSS/JavaScript interface.
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green?logo=fastapi&logoColor=white)
-![Render](https://img.shields.io/badge/Deploy-Render-46E3B7?logo=render&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+The frontend supports image upload, drag and drop, and browser camera capture. Results include one entry per detected face, localized labels, confidence scores, face regions, and a thumbnail preview.
 
----
+## Features
 
-## ✨ Features / ফিচার সমূহ
+- Age estimation
+- Seven emotion categories: angry, disgust, fear, happy, sad, surprise, and neutral
+- Gender and race estimation
+- Multiple-face analysis
+- Camera capture and image upload from desktop or mobile browsers
+- Drag-and-drop upload
+- Bengali labels and error messages in the UI and API responses
+- JPEG, PNG, WebP, GIF, and BMP validation
+- File size and image-dimension limits
+- Per-IP rate limiting and security response headers
+- Docker and Render deployment support
 
-- **বয়স অনুমান** — ছবি থেকে আনুমানিক বয়স বের করে
-- **ইমোশন ডিটেকশন** — খুশি, রাগ, দুঃখ, অবাক সহ ৭ ধরনের ইমোশন শনাক্ত করে
-- **জেন্ডার ডিটেকশন** — পুরুষ/নারী শনাক্ত করে
-- **এথনিসিটি অনুমান** — এশিয়ান, ভারতীয়, আফ্রিকান, ইউরোপীয় ইত্যাদি অনুমান করে
-- **মাল্টিপল ফেস** — একটি ছবিতে একাধিক মুখ শনাক্ত ও বিশ্লেষণ করতে পারে
-- **বাংলা ইন্টারফেস** — সম্পূর্ণ বাংলায় ফলাফল প্রদর্শন
-- **লাইভ ক্যামেরা** — ব্রাউজারে সরাসরি ক্যামেরা থেকে ছবি তোলা যায় (ফ্রন্ট/ব্যাক সুইচ)
-- **ড্র্যাগ & ড্রপ** — ছবি ড্র্যাগ করে আপলোড করা যায়
-- **মোবাইল গ্যালারি/ক্যামেরা এক্সেস** — মোবাইলে অ্যালবাম/গুগল ফটোস থেকে ছবি নেওয়া
-- **ভ্যালিডেশন** — ফাইল টাইপ, সাইজ (10MB), ডাইমেনশন (50-4096px), magic bytes চেক
-- **সিকিউরিটি** — Rate limiting, security headers, input sanitization
-- **এরর হ্যান্ডলিং** — সব এরর বাংলায় Toast notification দিয়ে দেখানো হয়
+## Technology
 
-## 🛠 Tech Stack
+| Area           | Technology                         |
+| -------------- | ---------------------------------- |
+| Backend        | Python 3.10+, FastAPI, Uvicorn     |
+| Analysis       | DeepFace, TensorFlow/Keras, OpenCV |
+| Image handling | Pillow, NumPy                      |
+| Frontend       | HTML, CSS, vanilla JavaScript      |
+| Deployment     | Docker, Render                     |
+| Testing        | pytest, HTTPX, Locust              |
 
-| Component | Technology |
-|-----------|------------|
-| Backend   | Python 3.10+, FastAPI |
-| AI/ML     | DeepFace, TensorFlow/Keras |
-| Frontend  | Vanilla HTML/CSS/JS |
-| Detection | OpenCV (face detection) |
-| Deploy    | Render (Docker) |
-| Testing   | pytest, Locust (load testing) |
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 ai-face-analyzer/
 ├── app/
 │   ├── __init__.py
-│   └── main.py           # FastAPI application
+│   └── main.py             # FastAPI application and API routes
 ├── static/
-│   ├── style.css          # Dark-themed UI styles
-│   └── app.js             # Frontend logic (camera, upload, results)
+│   ├── app.js              # Upload, camera, and results logic
+│   └── style.css           # Frontend styles
 ├── templates/
-│   └── index.html         # Single-page frontend
+│   └── index.html           # Single-page frontend
 ├── tests/
-│   ├── conftest.py        # Test fixtures
-│   ├── test_api.py        # 19 unit/integration tests
-│   └── locustfile.py      # Load testing config
-├── Dockerfile             # Docker build for Render
-├── render.yaml            # Render Blueprint (one-click deploy)
-├── requirements.txt       # Python dependencies
-├── pyproject.toml         # Project config & dev dependencies
+│   ├── conftest.py          # Test fixtures
+│   ├── locustfile.py        # Load-test scenario
+│   └── test_api.py          # API and validation tests
+├── Dockerfile
+├── pyproject.toml           # Runtime and test dependencies
+├── render.yaml              # Render service configuration
 └── README.md
 ```
 
-## 🚀 Deploy to Render / রেন্ডারে ডিপ্লয়
+## Local Development
 
-### এক-ক্লিক ডিপ্লয়
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/RakibulIslam39/ai-face-analyzer)
-
-### ম্যানুয়াল ডিপ্লয়
-
-1. [Render](https://render.com)-এ লগইন করুন
-2. **"New +"** → **"Web Service"** ক্লিক করুন
-3. GitHub থেকে `ai-face-analyzer` রিপো কানেক্ট করুন
-4. সেটিংস:
-   - **Name:** `ai-face-analyzer`
-   - **Runtime:** `Docker`
-   - **Plan:** `Starter` বা তার উপরে (TensorFlow-এর জন্য কমপক্ষে 2GB RAM দরকার)
-5. **"Create Web Service"** ক্লিক করুন
-
-> **⚠️ গুরুত্বপূর্ণ:** TensorFlow + DeepFace চালাতে কমপক্ষে **2GB RAM** লাগে। Render-এর **Starter** ($7/month) বা **Standard** প্ল্যান সিলেক্ট করুন। Free tier-এ RAM কম থাকায় কাজ নাও করতে পারে।
-
-## 💻 Local Development / লোকাল ডেভেলপমেন্ট
+Python 3.10 or newer is required. DeepFace downloads its model files on first use; the Docker image preloads the configured models during the build.
 
 ```bash
-# 1. Clone the repo
 git clone https://github.com/RakibulIslam39/ai-face-analyzer.git
 cd ai-face-analyzer
 
-# 2. Install dependencies
+python -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
 pip install -e .
 
-# 3. Run the server
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-
-# 4. Open browser
-# http://localhost:8000
 ```
 
-## 🐳 Docker দিয়ে রান
+Open <http://localhost:8000> after the server starts. Interactive API documentation is available at <http://localhost:8000/docs>.
+
+## Docker
 
 ```bash
 docker build -t ai-face-analyzer .
-docker run -p 8000:8000 ai-face-analyzer
+docker run --rm -p 8000:8000 ai-face-analyzer
 ```
 
-## 🧪 Testing / টেস্টিং
+The container listens on `PORT` when that environment variable is provided, or port `8000` by default.
 
-### Unit & Integration Tests (pytest)
+## Render Deployment
+
+This repository includes `render.yaml` and a Dockerfile for Render. The configured service is named `ai-face-analyzer`, uses the Docker runtime, listens on port `8000`, and checks `GET /health` for service health.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/RakibulIslam39/ai-face-analyzer)
+
+DeepFace and TensorFlow are resource-intensive. A Render plan with enough memory for model loading is recommended; the Docker build also downloads the Age, Emotion, Gender, and Race models.
+
+## Testing
+
+Install the optional test dependencies and run the test suite:
 
 ```bash
-# Install test dependencies
 pip install -e ".[test]"
-
-# Run tests (19 tests)
 pytest -v
 ```
 
-### Load Testing (Locust)
+The real-face integration tests use `/home/ubuntu/test_face.jpg` when that fixture is available; otherwise those tests are skipped. Most validation and endpoint tests run without a real face image.
+
+For a basic Locust load test, start the application first and run:
 
 ```bash
-# Start the server first, then:
 locust -f tests/locustfile.py --host http://localhost:8000 --headless -u 10 -r 2 --run-time 30s
 ```
 
-## 📡 API Reference
+## API
+
+### `GET /`
+
+Serves the web interface.
+
+### `GET /health`
+
+Returns the service status:
+
+```json
+{ "status": "ok", "version": "1.1.0" }
+```
 
 ### `POST /api/analyze`
 
-Upload an image file to analyze faces.
+Accepts `multipart/form-data` with an image in the required `file` field.
 
-**Request:** `multipart/form-data` with a `file` field.
+Successful responses contain one result for every detected face:
 
-**Success Response (200):**
 ```json
 {
   "success": true,
@@ -138,12 +132,12 @@ Upload an image file to analyze faces.
       "age": 25,
       "emotion": {
         "dominant": "happy",
-        "dominant_bn": "খুশি 😊",
+        "dominant_bn": "খুশি",
         "scores": { "happy": 95.2, "neutral": 3.1 }
       },
       "gender": {
         "dominant": "Man",
-        "dominant_bn": "পুরুষ 👨",
+        "dominant_bn": "পুরুষ",
         "scores": { "Man": 98.5, "Woman": 1.5 }
       },
       "ethnicity": {
@@ -158,32 +152,32 @@ Upload an image file to analyze faces.
 }
 ```
 
-**Error Responses:**
+Example request:
 
-| Status | Reason | Bengali Message |
-|--------|--------|----------------|
-| 400 | Invalid file type/format | এই ফাইল ফরম্যাট সাপোর্টেড নয় |
-| 400 | Empty file | ফাইলটি খালি |
-| 400 | Image too small | ইমেজটি খুব ছোট |
-| 413 | File too large (>10MB) | ফাইলের আকার ১০ MB-র বেশি হতে পারবে না |
-| 422 | No face detected | কোনো মুখ শনাক্ত করা যায়নি |
-| 429 | Rate limited | অনেক বেশি রিকোয়েস্ট পাঠানো হয়েছে |
-| 500 | Server error | সার্ভারে একটি অপ্রত্যাশিত সমস্যা হয়েছে |
+```bash
+curl -X POST http://localhost:8000/api/analyze \
+  -F "file=@/path/to/photo.jpg"
+```
 
-### `GET /health`
+Common responses include:
 
-Health check endpoint. Returns `{"status": "ok", "version": "1.1.0"}`
+| Status | Meaning                                                             |
+| ------ | ------------------------------------------------------------------- |
+| `400`  | Invalid, empty, unsupported, corrupt, too-small, or too-large image |
+| `413`  | Request image exceeds 10 MB                                         |
+| `422`  | No face was detected                                                |
+| `429`  | More than 20 analysis requests in one minute from the same IP       |
+| `500`  | Analysis or unexpected server error                                 |
 
-## 🔒 Security Features
+Accepted images must be between 50 and 4096 pixels in each dimension and no larger than 10 MB. Accepted formats are JPEG, PNG, WebP, GIF, and BMP.
 
-- **Rate Limiting** — 20 requests/minute per IP
-- **File Validation** — MIME type, magic bytes, file extension, PIL verify
-- **Image Dimension Check** — Min 50x50px, max 4096x4096px
-- **Size Limit** — Maximum 10 MB per file
-- **Security Headers** — X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy
-- **Input Sanitization** — HTML escaping, XSS prevention
-- **Global Exception Handler** — Catches and safely returns unhandled errors
+## Security Notes
 
-## 📄 License
+- Uploads are checked by MIME type, extension, magic bytes, Pillow verification, size, and dimensions.
+- Analysis is limited to 20 requests per IP address per 60-second window.
+- Responses include `X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`, `Referrer-Policy`, and `Permissions-Policy` headers.
+- DeepFace age, gender, and race results are estimates and should not be treated as definitive personal attributes.
+
+## License
 
 MIT
